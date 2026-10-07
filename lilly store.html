@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lily Blossom General Store - Fresh Groceries & Daily Essentials</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lily: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              300: '#f472b6',
+              500: '#ec4899',
+              600: '#db2777',
+              700: '#be185d',
+            },
+            leaf: {
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #fdf2f8;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #f472b6;
+      border-radius: 4px;
+    }
+
+    /* Animated Floating Petals Canvas Background */
+    #petal-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, rgba(253, 242, 248, 0.95) 0%, rgba(252, 231, 243, 0.9) 50%, rgba(244, 114, 182, 0.15) 100%);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(251, 207, 232, 0.5);
+    }
+
+    /* Carousel Image Swipe Transition */
+    .carousel-image {
+      transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    /* Toast Notification Animation */
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+    .toast-enter {
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .toast-exit {
+      animation: fadeOut 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-lily-200 selection:text-lily-700 min-h-screen flex flex-col">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-lily-600 via-lily-500 to-leaf-600 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium shadow-inner flex items-center justify-center gap-2">
+    <span>🌸 Special Launch Offer: Use Code <strong class="bg-white/20 px-2 py-0.5 rounded border border-white/30 tracking-wider">LILY10</strong> for 10% OFF or <strong class="bg-white/20 px-2 py-0.5 rounded border border-white/30 tracking-wider">WELCOME50</strong> for ₹50 OFF!</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-lily-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-12 h-12 rounded-full bg-lily-100 border-2 border-lily-300 flex items-center justify-center text-lily-600 text-2xl group-hover:scale-105 transition-transform duration-300 shadow-sm">
+          🪷
+        </div>
+        <div>
+          <span class="font-serif font-bold text-xl sm:text-2xl text-slate-900 block leading-none">Lily Blossom</span>
+          <span class="text-xs text-leaf-600 font-semibold uppercase tracking-wider block mt-1">General Store & Groceries</span>
+        </div>
+      </a>
+
+      <!-- Quick Nav Search Bar (Desktop) -->
+      <div class="hidden md:flex items-center flex-1 max-w-md mx-8 relative">
+        <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="Search daily groceries, rice, oil, spices..." class="w-full bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-sm text-slate-800 pl-10 pr-4 py-2.5 rounded-full border border-slate-200 focus:border-lily-400 focus:ring-2 focus:ring-lily-100 outline-none transition-all">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-sm"></i>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Quick Call Support -->
+        <a href="tel:1800123456" class="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-lily-600 px-3 py-2 rounded-full hover:bg-lily-50 transition-colors">
+          <i class="fa-solid fa-headset text-lily-500 text-base"></i>
+          <span>1800-123-456</span>
+        </a>
+
+        <!-- Cart Button -->
+        <button onclick="toggleCartModal(true)" class="relative bg-gradient-to-r from-lily-500 to-lily-600 hover:from-lily-600 hover:to-lily-700 text-white px-4 sm:px-5 py-2.5 rounded-full font-semibold shadow-md shadow-lily-500/20 hover:shadow-lg hover:shadow-lily-500/30 transition-all flex items-center gap-2.5 active:scale-95">
+          <i class="fa-solid fa-basket-shopping text-base"></i>
+          <span class="hidden sm:inline text-sm">Cart</span>
+          <span id="cart-badge-count" class="bg-white text-lily-700 font-extrabold text-xs px-2 py-0.5 rounded-full min-w-[20px] text-center shadow-inner">0</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mobile Search Bar -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative">
+        <input type="text" id="mobile-search-input" onkeyup="filterProductsMobile()" placeholder="Search fresh items..." class="w-full bg-slate-100 text-sm text-slate-800 pl-10 pr-4 py-2 rounded-full border border-slate-200 focus:border-lily-400 focus:ring-2 focus:ring-lily-100 outline-none">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    <!-- Hero Section with Petals Canvas & Lily Theme -->
+    <section class="relative hero-gradient overflow-hidden border-b border-lily-100 py-12 lg:py-16">
+      <canvas id="petal-canvas"></canvas>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-7 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 bg-white/80 border border-lily-200 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-lily-700 shadow-sm mb-4">
+              <span class="text-base">🪷</span> 100% Pure & Fresh Daily Essentials
+            </span>
+            <h1 class="font-serif font-bold text-3xl sm:text-5xl lg:text-6xl text-slate-900 leading-tight mb-4">
+              Freshness Blooming At Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-lily-600 via-lily-500 to-leaf-600">Doorstep</span>
+            </h1>
+            <p class="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 mb-6 leading-relaxed">
+              Experience handpicked grocery items, organic spices, cold-pressed oils, and farm-fresh daily staples delivered with love in Indian local standard packing.
+            </p>
+            
+            <!-- Value Highlights -->
+            <div class="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 text-xs sm:text-sm font-medium text-slate-700">
+              <div class="flex items-center gap-2 bg-white/70 px-3.5 py-2 rounded-xl border border-lily-100">
+                <i class="fa-solid fa-truck-fast text-leaf-600 text-base"></i>
+                <span>Fast 2-Hour Delivery</span>
+              </div>
+              <div class="flex items-center gap-2 bg-white/70 px-3.5 py-2 rounded-xl border border-lily-100">
+                <i class="fa-solid fa-indian-rupee-sign text-lily-600 text-base"></i>
+                <span>Best Wholesale Prices</span>
+              </div>
+              <div class="flex items-center gap-2 bg-white/70 px-3.5 py-2 rounded-xl border border-lily-100">
+                <i class="fa-solid fa-rotate-left text-blue-600 text-base"></i>
+                <span>48 Hours Easy Return</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Floral Illustration Box -->
+          <div class="lg:col-span-5 flex justify-center">
+            <div class="relative w-full max-w-md">
+              <div class="absolute -inset-1 bg-gradient-to-r from-lily-400 to-leaf-400 rounded-3xl blur opacity-30 animate-pulse"></div>
+              <div class="relative glass-card rounded-3xl p-6 shadow-xl text-center border border-white">
+                <div class="w-full h-56 rounded-2xl overflow-hidden mb-4 relative shadow-inner">
+                  <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Fresh Grocery Basket" class="w-full h-full object-cover">
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
+                    <span class="text-white text-left font-serif text-lg font-bold">Premium Everyday Staples</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center text-xs font-bold text-slate-600 bg-lily-50/80 p-3 rounded-xl border border-lily-100">
+                  <span class="text-leaf-700 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Quality Verified</span>
+                  <span class="text-lily-700">Special Discounts Inside</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-widest text-lily-600">Daily Pantry Essentials</span>
+          <h2 class="font-serif font-bold text-2xl sm:text-3xl text-slate-900 mt-1">Featured General Store Products</h2>
+        </div>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0" id="category-filter-container">
+          <button onclick="filterCategory('all')" class="cat-btn active bg-lily-600 text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all shadow-sm">All Items</button>
+          <button onclick="filterCategory('grains')" class="cat-btn bg-white hover:bg-lily-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all">Grains & Rice</button>
+          <button onclick="filterCategory('oils')" class="cat-btn bg-white hover:bg-lily-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all">Oils & Ghee</button>
+          <button onclick="filterCategory('spices')" class="cat-btn bg-white hover:bg-lily-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all">Spices & Tea</button>
+          <button onclick="filterCategory('household')" class="cat-btn bg-white hover:bg-lily-50 text-slate-700 border border-slate-200 text-xs sm:text-sm font-semibold px-4 py-2 rounded-full whitespace-nowrap transition-all">Household</button>
+        </div>
+      </div>
+
+      <!-- Product Cards Grid -->
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- Products dynamically injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Return & Refund Policy Section -->
+    <section class="bg-gradient-to-b from-white to-lily-50/50 py-12 border-y border-lily-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="bg-leaf-50 text-leaf-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-leaf-200">Customer Assurance</span>
+          <h2 class="font-serif font-bold text-2xl sm:text-3xl text-slate-900 mt-2">Guaranteed Quality & Hassle-Free Returns</h2>
+          <p class="text-slate-600 text-sm mt-2">We strive to bring you farm-fresh purity. If you aren't completely satisfied, our customer-friendly policy has you covered.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-6 rounded-2xl border border-lily-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 bg-lily-100 text-lily-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg mb-2">48-Hours Easy Return</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">Return non-perishable packets or damaged goods within 48 hours of delivery without any questions asked.</p>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-lily-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 bg-leaf-100 text-leaf-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg mb-2">Freshness Guarantee</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">100% replacement or instant wallet refund if dairy, oil, or food items fail to meet quality standards.</p>
+          </div>
+
+          <div class="bg-white p-6 rounded-2xl border border-lily-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-xl mb-4">
+              <i class="fa-solid fa-truck-ramp-box"></i>
+            </div>
+            <h3 class="font-bold text-slate-900 text-lg mb-2">Doorstep Pickup</h3>
+            <p class="text-slate-600 text-sm leading-relaxed">Our delivery partner will collect returned items directly from your address during your chosen time slot.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Review Summary & Add Review Form -->
+        <div class="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h2 class="font-serif font-bold text-2xl text-slate-900 mb-2">Customer Feedback</h2>
+          <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+            <div class="text-4xl font-extrabold text-slate-900">4.9</div>
+            <div>
+              <div class="flex text-amber-400 text-sm mb-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star-half-stroke"></i>
+              </div>
+              <span class="text-xs text-slate-500 font-medium">Based on 1,240+ verified local orders</span>
+            </div>
+          </div>
+
+          <!-- Add Review Form -->
+          <form id="review-form" onsubmit="submitReview(event)" class="space-y-4">
+            <h3 class="font-bold text-slate-800 text-sm">Write a Customer Review</h3>
+            <div>
+              <input type="text" id="rev-name" required placeholder="Your Full Name" class="w-full bg-slate-50 text-sm border border-slate-200 rounded-xl p-3 focus:bg-white focus:border-lily-500 focus:ring-1 focus:ring-lily-500 outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <select id="rev-rating" class="w-full bg-slate-50 text-sm border border-slate-200 rounded-xl p-3 focus:bg-white focus:border-lily-500 outline-none">
+                  <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                  <option value="4">⭐⭐⭐⭐☆ (4/5)</option>
+                  <option value="3">⭐⭐⭐☆☆ (3/5)</option>
+                </select>
+              </div>
+              <div>
+                <input type="text" id="rev-location" required placeholder="City (e.g. Mumbai)" class="w-full bg-slate-50 text-sm border border-slate-200 rounded-xl p-3 focus:bg-white focus:border-lily-500 outline-none">
+              </div>
+            </div>
+            <div>
+              <textarea id="rev-comment" required rows="3" placeholder="Share your experience regarding food freshness, packaging or delivery..." class="w-full bg-slate-50 text-sm border border-slate-200 rounded-xl p-3 focus:bg-white focus:border-lily-500 outline-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm py-3 rounded-xl transition-all shadow">Submit Review</button>
+          </form>
+        </div>
+
+        <!-- Customer Reviews List -->
+        <div class="lg:col-span-7 space-y-4" id="reviews-container">
+          <!-- Dynamic reviews will be prepended here -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-sm border-t border-slate-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="space-y-4">
+          <div class="flex items-center gap-2 text-white font-serif font-bold text-xl">
+            <span>🌸</span> Lily Blossom
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Your neighborhood trusted general store providing high quality grocery items, pure ghee, spices, and home essentials with doorstep fast delivery.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-3 text-sm">Quick Categories</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Basmati Rice & Atta</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Pure Cow Ghee & Edible Oils</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Organic Turmeric & Spices</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Dry Fruits & Nuts Combo</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-3 text-sm">Support & Policies</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#" class="hover:text-lily-400 transition-colors">48-Hour Return Policy</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Terms of Freshness</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Track Your Order</a></li>
+            <li><a href="#" class="hover:text-lily-400 transition-colors">Store Locator</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-white font-semibold mb-3 text-sm">Accepted Payments</h4>
+          <div class="flex flex-wrap gap-2 text-xs text-slate-300">
+            <span class="bg-slate-800 px-2.5 py-1.5 rounded border border-slate-700">GPay / PhonePe UPI</span>
+            <span class="bg-slate-800 px-2.5 py-1.5 rounded border border-slate-700">RuPay / Visa</span>
+            <span class="bg-slate-800 px-2.5 py-1.5 rounded border border-slate-700">Net Banking</span>
+            <span class="bg-slate-800 px-2.5 py-1.5 rounded border border-slate-700">Paytm</span>
+            <span class="bg-slate-800 px-2.5 py-1.5 rounded border border-slate-700">Cash on Delivery</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <p>© 2026 Lily Blossom General Store India. All rights reserved.</p>
+        <p class="flex items-center gap-1">Crafted with <i class="fa-solid fa-heart text-lily-500"></i> for daily Indian households.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cart Drawer / Modal -->
+  <div id="cart-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-end opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="cart-panel" class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col translate-x-full transition-transform duration-300 ease-out">
+      
+      <!-- Cart Header -->
+      <div class="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-lily-50/50">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-lily-100 text-lily-600 flex items-center justify-center text-lg">
+            🛒
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-lg">Your Grocery Cart</h3>
+            <span id="cart-item-count-subtitle" class="text-xs text-slate-500">0 items added</span>
+          </div>
+        </div>
+        <button onclick="toggleCartModal(false)" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Cart Items List Container -->
+      <div id="cart-items-container" class="flex-grow overflow-y-auto p-4 sm:p-6 space-y-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Cart Summary & Coupon -->
+      <div class="p-4 sm:p-6 border-t border-slate-100 bg-slate-50/80 space-y-4">
+        <!-- Coupon Code Box -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Apply Discount Coupon</label>
+          <div class="flex gap-2">
+            <input type="text" id="coupon-code-input" placeholder="Enter LILY10 or WELCOME50" class="flex-grow uppercase bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:border-lily-500 outline-none">
+            <button onclick="applyCoupon()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs px-4 rounded-xl transition-all">Apply</button>
+          </div>
+          <p id="coupon-status-msg" class="text-xs font-medium mt-1.5 hidden"></p>
+        </div>
+
+        <!-- Bill Breakdown -->
+        <div class="space-y-1.5 text-xs text-slate-600 pt-2 border-t border-slate-200">
+          <div class="flex justify-between">
+            <span>Item Subtotal</span>
+            <span class="font-semibold text-slate-800">₹<span id="cart-subtotal">0.00</span></span>
+          </div>
+          <div class="flex justify-between text-leaf-700 font-medium">
+            <span>Coupon Discount</span>
+            <span>- ₹<span id="cart-discount">0.00</span></span>
+          </div>
+          <div class="flex justify-between">
+            <span>Delivery Charge</span>
+            <span class="text-leaf-600 font-semibold">FREE</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold text-slate-900 pt-2 border-t border-slate-200">
+            <span>Total Amount</span>
+            <span class="text-lily-700 text-base">₹<span id="cart-final-total">0.00</span></span>
+          </div>
+        </div>
+
+        <!-- Checkout Trigger Button -->
+        <button onclick="openCheckoutModal()" class="w-full bg-gradient-to-r from-lily-600 to-leaf-600 hover:from-lily-700 hover:to-leaf-700 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-lily-500/20 transition-all flex items-center justify-center gap-2 active:scale-98">
+          <span>Proceed to Checkout</span>
+          <i class="fa-solid fa-arrow-right text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout & Payment Options Modal -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-lily-600 to-lily-700 text-white p-5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-lock text-xl"></i>
+          <div>
+            <h3 class="font-bold text-base">Secure Indian Payment Checkout</h3>
+            <p class="text-xs text-lily-100">Encrypted 256-bit Transaction</p>
+          </div>
+        </div>
+        <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Checkout Body -->
+      <div class="p-6 overflow-y-auto space-y-6">
+        <!-- Delivery Address Details -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-3">1. Delivery Address</h4>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <input type="text" id="cust-name" placeholder="Full Name *" required class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:border-lily-500">
+            <input type="tel" id="cust-phone" placeholder="10-digit Phone Number *" required class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:border-lily-500">
+            <input type="text" id="cust-address" placeholder="Flat No., House, Area *" required class="col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:border-lily-500">
+            <input type="text" id="cust-pincode" placeholder="Pincode (e.g. 400001) *" required class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:border-lily-500">
+            <input type="text" id="cust-city" placeholder="City / District *" required class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:border-lily-500">
+          </div>
+        </div>
+
+        <!-- Payment Method Options -->
+        <div>
+          <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-3">2. Select Payment Option</h4>
+          
+          <div class="space-y-2.5">
+            <!-- UPI Option -->
+            <label class="flex items-center justify-between p-3.5 border rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors border-lily-300 bg-lily-50/30">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment_method" value="upi" checked class="text-lily-600 focus:ring-lily-500">
+                <div>
+                  <span class="font-bold text-slate-900 text-xs sm:text-sm block">UPI (Instant Payment)</span>
+                  <span class="text-[11px] text-slate-500">Google Pay, PhonePe, Paytm, BHIM</span>
+                </div>
+              </div>
+              <span class="text-xs font-bold text-leaf-700 bg-leaf-50 px-2 py-1 rounded">Fastest</span>
+            </label>
+
+            <!-- Cards Option -->
+            <label class="flex items-center justify-between p-3.5 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment_method" value="card" class="text-lily-600 focus:ring-lily-500">
+                <div>
+                  <span class="font-bold text-slate-900 text-xs sm:text-sm block">Credit / Debit Card</span>
+                  <span class="text-[11px] text-slate-500">RuPay, Visa, Mastercard</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-credit-card text-slate-400"></i>
+            </label>
+
+            <!-- NetBanking -->
+            <label class="flex items-center justify-between p-3.5 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment_method" value="netbanking" class="text-lily-600 focus:ring-lily-500">
+                <div>
+                  <span class="font-bold text-slate-900 text-xs sm:text-sm block">Net Banking</span>
+                  <span class="text-[11px] text-slate-500">SBI, HDFC, ICICI, Axis & All Banks</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-building-columns text-slate-400"></i>
+            </label>
+
+            <!-- COD Option -->
+            <label class="flex items-center justify-between p-3.5 border border-slate-200 rounded-2xl cursor-pointer hover:bg-slate-50 transition-colors">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="payment_method" value="cod" class="text-lily-600 focus:ring-lily-500">
+                <div>
+                  <span class="font-bold text-slate-900 text-xs sm:text-sm block">Cash On Delivery (COD)</span>
+                  <span class="text-[11px] text-slate-500">Pay cash/QR code at doorstep</span>
+                </div>
+              </div>
+              <i class="fa-solid fa-hand-holding-dollar text-slate-400"></i>
+            </label>
+          </div>
+        </div>
+
+        <!-- Payable Summary -->
+        <div class="bg-slate-100 p-4 rounded-2xl flex justify-between items-center text-sm">
+          <span class="font-medium text-slate-700">Total Payable Amount:</span>
+          <span class="font-extrabold text-lily-700 text-lg">₹<span id="checkout-payable-total">0.00</span></span>
+        </div>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="p-4 border-t border-slate-100 bg-slate-50">
+        <button onclick="processOrder()" class="w-full bg-leaf-600 hover:bg-leaf-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>Confirm & Pay Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Confirmation Success Modal -->
+  <div id="success-modal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 text-center space-y-4">
+      <div class="w-20 h-20 bg-leaf-100 text-leaf-600 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+        🌸
+      </div>
+      <h3 class="font-serif font-bold text-2xl text-slate-900">Order Placed Successfully!</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        Thank you for shopping at Lily Blossom General Store. Your order ID is <strong id="order-id-display" class="text-slate-900">#LILY-98231</strong>.
+      </p>
+      <div class="bg-slate-50 p-3 rounded-2xl text-left text-xs space-y-1 border border-slate-200">
+        <div class="flex justify-between"><span class="text-slate-500">Status:</span><span class="text-leaf-600 font-bold">Confirmed</span></div>
+        <div class="flex justify-between"><span class="text-slate-500">Estimated Delivery:</span><span class="font-bold text-slate-800">Today within 2 hours</span></div>
+      </div>
+      <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 rounded-xl transition-all text-xs">Back to Home</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    /* ===================================================
+       1. PETALS ANIMATION CANVAS (LILY FLOWER AESTHETICS)
+       =================================================== */
+    const canvas = document.getElementById('petal-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const petals = [];
+    const petalCount = 20;
+
+    class Petal {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = -20;
+        this.size = Math.random() * 8 + 6;
+        this.speedY = Math.random() * 1 + 0.5;
+        this.speedX = Math.random() * 0.8 - 0.4;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 2 - 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += Math.sin(this.y * 0.02) + this.speedX;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height + 20) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(this.size, -this.size, this.size * 2, 0);
+        ctx.quadraticCurveTo(this.size, this.size, 0, 0);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < petalCount; i++) {
+      petals.push(new Petal());
+    }
+
+    function animatePetals() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      petals.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animatePetals);
+    }
+    animatePetals();
+
+
+    /* ===================================================
+       2. PRODUCTS DATA (INDIAN GENERAL STORE ITEMS IN ₹)
+       =================================================== */
+    const products = [
+      {
+        id: 1,
+        title: "Royal Basmati Rice (5kg)",
+        category: "grains",
+        price: 549,
+        mrp: 699,
+        discount: 21,
+        rating: 4.8,
+        reviewsCount: 340,
+        description: "Aromatic long-grain aged Basmati rice ideal for biryani and daily meals.",
+        images: [
+          "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 2,
+        title: "Pure Vedic Cow Ghee (1L)",
+        category: "oils",
+        price: 680,
+        mrp: 750,
+        discount: 9,
+        rating: 4.9,
+        reviewsCount: 512,
+        description: "Traditionally churned granular pure cow ghee rich in natural aroma and nutrients.",
+        images: [
+          "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 3,
+        title: "Sunflower Cooking Oil (2L)",
+        category: "oils",
+        price: 275,
+        mrp: 320,
+        discount: 14,
+        rating: 4.7,
+        reviewsCount: 210,
+        description: "Light and healthy refined sunflower oil enriched with Vitamins A & D.",
+        images: [
+          "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 4,
+        title: "Organic Turmeric & Spices Pack",
+        category: "spices",
+        price: 199,
+        mrp: 260,
+        discount: 23,
+        rating: 4.9,
+        reviewsCount: 180,
+        description: "High-curcumin farm-fresh turmeric powder, red chilli powder & coriander powder combo.",
+        images: [
+          "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 5,
+        title: "Whole Wheat Atta (10kg)",
+        category: "grains",
+        price: 410,
+        mrp: 460,
+        discount: 11,
+        rating: 4.8,
+        reviewsCount: 420,
+        description: "100% pure stone-ground chakki fresh wheat flour for soft rotis.",
+        images: [
+          "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 6,
+        title: "Assam Orthodox Tea (500g)",
+        category: "spices",
+        price: 240,
+        mrp: 290,
+        discount: 17,
+        rating: 4.6,
+        reviewsCount: 195,
+        description: "Strong aromatic CTC leaf tea blended with authentic ginger & cardamom notes.",
+        images: [
+          "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 7,
+        title: "California Almonds (500g)",
+        category: "grains",
+        price: 430,
+        mrp: 550,
+        discount: 22,
+        rating: 4.9,
+        reviewsCount: 290,
+        description: "Crunchy premium raw almonds loaded with Vitamin E and healthy fats.",
+        images: [
+          "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1563822249510-04678c787343?auto=format&fit=crop&w=600&q=80"
+        ]
+      },
+      {
+        id: 8,
+        title: "Handwash & Cleaning Combo",
+        category: "household",
+        price: 320,
+        mrp: 399,
+        discount: 20,
+        rating: 4.7,
+        reviewsCount: 165,
+        description: "Floral lily anti-bacterial handwash liquid + multi-surface floor cleaner pack.",
+        images: [
+          "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+          "https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=600&q=80"
+        ]
+      }
+    ];
+
+    // Track active image index for each product carousel
+    const currentImageIndexes = {};
+    products.forEach(p => { currentImageIndexes[p.id] = 0; });
+
+    let activeCategory = 'all';
+
+
+    /* ===================================================
+       3. RENDER PRODUCTS & SWIPE CAROUSEL LOGIC
+       =================================================== */
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+
+      const filtered = products.filter(p => {
+        const matchesCat = (activeCategory === 'all' || p.category === activeCategory);
+        const searchVal = (document.getElementById('search-input').value || document.getElementById('mobile-search-input').value || '').toLowerCase();
+        const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.description.toLowerCase().includes(searchVal);
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-slate-200">
+            <span class="text-4xl">🔍</span>
+            <p class="font-bold text-slate-800 text-base mt-2">No items found</p>
+            <p class="text-xs text-slate-500">Try searching for rice, ghee, spices or oil...</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const activeIdx = currentImageIndexes[p.id] || 0;
+        
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group";
+        
+        card.innerHTML = `
+          <!-- Image Carousel Header -->
+          <div class="relative bg-slate-100 h-52 overflow-hidden select-none">
+            <!-- Badges -->
+            <div class="absolute top-3 left-3 z-20 flex flex-col gap-1">
+              <span class="bg-lily-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-sm">
+                ${p.discount}% OFF
+              </span>
+            </div>
+
+            <!-- Product Main Image -->
+            <img id="img-${p.id}" src="${p.images[activeIdx]}" alt="${p.title}" class="w-full h-full object-cover carousel-image group-hover:scale-105">
+
+            <!-- Next / Prev Buttons -->
+            ${p.images.length > 1 ? `
+              <button onclick="switchImage(${p.id}, -1)" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center text-xs shadow-md transition-all z-20">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button onclick="switchImage(${p.id}, 1)" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 hover:bg-white text-slate-800 flex items-center justify-center text-xs shadow-md transition-all z-20">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            ` : ''}
+
+            <!-- Thumbnail Indicators -->
+            <div class="absolute bottom-2 left-0 right-0 z-20 flex justify-center gap-1.5">
+              ${p.images.map((_, idx) => `
+                <span onclick="setImageIndex(${p.id}, ${idx})" class="w-2 h-2 rounded-full cursor-pointer transition-all ${idx === activeIdx ? 'bg-lily-600 w-5' : 'bg-white/70'}"></span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Product Details Body -->
+          <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex items-center justify-between text-xs mb-1">
+                <span class="text-leaf-700 font-bold uppercase tracking-wider text-[10px]">In Stock</span>
+                <span class="text-amber-500 font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-star text-[10px]"></i> ${p.rating} (${p.reviewsCount})
+                </span>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base leading-snug group-hover:text-lily-700 transition-colors">${p.title}</h3>
+              <p class="text-slate-500 text-xs mt-1 line-clamp-2">${p.description}</p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400 line-through">₹${p.mrp}</span>
+                <div class="text-xl font-extrabold text-slate-900">₹${p.price}</div>
+              </div>
+
+              <button onclick="addToCart(${p.id})" class="bg-lily-50 hover:bg-lily-600 text-lily-700 hover:text-white border border-lily-200 hover:border-lily-600 font-semibold px-4 py-2.5 rounded-2xl text-xs transition-all flex items-center gap-1.5 active:scale-95 shadow-sm">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add</span>
+              </button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function switchImage(productId, direction) {
+      const p = products.find(item => item.id === productId);
+      if (!p) return;
+      let newIdx = currentImageIndexes[productId] + direction;
+      if (newIdx < 0) newIdx = p.images.length - 1;
+      if (newIdx >= p.images.length) newIdx = 0;
+      setImageIndex(productId, newIdx);
+    }
+
+    function setImageIndex(productId, index) {
+      currentImageIndexes[productId] = index;
+      const imgElem = document.getElementById(`img-${productId}`);
+      const p = products.find(item => item.id === productId);
+      if (imgElem && p) {
+        imgElem.style.opacity = '0.4';
+        setTimeout(() => {
+          imgElem.src = p.images[index];
+          imgElem.style.opacity = '1';
+        }, 150);
+      }
+      renderProducts();
+    }
+
+    function filterCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-lily-600', 'text-white', 'active');
+        btn.classList.add('bg-white', 'text-slate-700');
+      });
+      event.currentTarget.classList.add('bg-lily-600', 'text-white', 'active');
+      event.currentTarget.classList.remove('bg-white', 'text-slate-700');
+      renderProducts();
+    }
+
+    function filterProducts() {
+      renderProducts();
+    }
+    function filterProductsMobile() {
+      renderProducts();
+    }
+
+
+    /* ===================================================
+       4. SHOPPING CART & DISCOUNT COUPON SYSTEM
+       =================================================== */
+    let cart = [];
+    let appliedCoupon = null;
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const existing = cart.find(item => item.id === productId);
+
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+
+      updateCartBadge();
+      showToast(`Added "${product.title}" to cart! 🌸`);
+    }
+
+    function updateCartBadge() {
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-badge-count').innerText = totalQty;
+      document.getElementById('cart-item-count-subtitle').innerText = `${totalQty} items added`;
+    }
+
+    function toggleCartModal(show) {
+      const modal = document.getElementById('cart-modal');
+      const panel = document.getElementById('cart-panel');
+      
+      if (show) {
+        renderCartItems();
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        panel.classList.remove('translate-x-full');
+      } else {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        panel.classList.add('translate-x-full');
+      }
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cart-items-container');
+      container.innerHTML = '';
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 space-y-3">
+            <span class="text-5xl opacity-80">🌸</span>
+            <p class="font-bold text-slate-800 text-base">Your cart is currently empty</p>
+            <p class="text-xs text-slate-500 max-w-xs mx-auto">Explore our daily grocery items and add fresh staples to your cart!</p>
+          </div>
+        `;
+        calculateCartTotals();
+        return;
+      }
+
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 gap-3";
+        div.innerHTML = `
+          <img src="${item.images[0]}" alt="${item.title}" class="w-14 h-14 object-cover rounded-xl border border-slate-200 flex-shrink-0">
+          <div class="flex-grow min-w-0">
+            <h4 class="font-bold text-slate-900 text-xs truncate">${item.title}</h4>
+            <div class="text-xs text-lily-700 font-extrabold mt-0.5">₹${item.price}</div>
+          </div>
+          <div class="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-slate-200">
+            <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-lily-600 font-bold text-xs">-</button>
+            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+            <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 flex items-center justify-center text-slate-600 hover:text-lily-600 font-bold text-xs">+</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      calculateCartTotals();
+    }
+
+    function changeQty(productId, delta) {
+      const item = cart.find(i => i.id === productId);
+      if (!item) return;
+
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.id !== productId);
+      }
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    function applyCoupon() {
+      const code = document.getElementById('coupon-code-input').value.trim().toUpperCase();
+      const msg = document.getElementById('coupon-status-msg');
+
+      if (code === 'LILY10') {
+        appliedCoupon = { type: 'percent', value: 10, code: 'LILY10' };
+        msg.className = "text-xs font-bold text-leaf-700 mt-1.5 block";
+        msg.innerText = "✓ 10% Discount Coupon Applied!";
+      } else if (code === 'WELCOME50') {
+        appliedCoupon = { type: 'flat', value: 50, code: 'WELCOME50' };
+        msg.className = "text-xs font-bold text-leaf-700 mt-1.5 block";
+        msg.innerText = "✓ ₹50 Flat Discount Coupon Applied!";
+      } else {
+        appliedCoupon = null;
+        msg.className = "text-xs font-bold text-rose-600 mt-1.5 block";
+        msg.innerText = "✕ Invalid Coupon Code";
+      }
+
+      calculateCartTotals();
+    }
+
+    function calculateCartTotals() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      let discount = 0;
+
+      if (appliedCoupon && subtotal > 0) {
+        if (appliedCoupon.type === 'percent') {
+          discount = (subtotal * appliedCoupon.value) / 100;
+        } else if (appliedCoupon.type === 'flat') {
+          discount = Math.min(subtotal, appliedCoupon.value);
+        }
+      }
+
+      const finalTotal = Math.max(0, subtotal - discount);
+
+      document.getElementById('cart-subtotal').innerText = subtotal.toFixed(2);
+      document.getElementById('cart-discount').innerText = discount.toFixed(2);
+      document.getElementById('cart-final-total').innerText = finalTotal.toFixed(2);
+      document.getElementById('checkout-payable-total').innerText = finalTotal.toFixed(2);
+    }
+
+
+    /* ===================================================
+       5. CHECKOUT & PAYMENT MODAL LOGIC
+       =================================================== */
+    function openCheckoutModal() {
+      if (cart.length === 0) {
+        showToast("Please add items to your cart first!");
+        return;
+      }
+      toggleCartModal(false);
+      const modal = document.getElementById('checkout-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function processOrder() {
+      const name = document.getElementById('cust-name').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+
+      if (!name || !phone || !address) {
+        showToast("Please fill in all address required fields!");
+        return;
+      }
+
+      closeCheckoutModal();
+      
+      // Clear Cart
+      cart = [];
+      appliedCoupon = null;
+      updateCartBadge();
+
+      // Show Success Modal
+      document.getElementById('order-id-display').innerText = `#LILY-${Math.floor(100000 + Math.random() * 900000)}`;
+      const successModal = document.getElementById('success-modal');
+      successModal.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeSuccessModal() {
+      const successModal = document.getElementById('success-modal');
+      successModal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+
+    /* ===================================================
+       6. CUSTOMER REVIEWS & INITIALIZATION
+       =================================================== */
+    const defaultReviews = [
+      {
+        name: "Pooja Sharma",
+        rating: 5,
+        location: "Mumbai",
+        date: "2 hours ago",
+        comment: "The Basmati Rice and Cow Ghee quality are outstanding. Super fast delivery in local Mumbai area!"
+      },
+      {
+        name: "Vikram Mehta",
+        rating: 5,
+        location: "Pune",
+        date: "Yesterday",
+        comment: "Loved the Lily flower themed branding! Products came neatly packaged without any leakages."
+      },
+      {
+        name: "Ananya Iyer",
+        rating: 4,
+        location: "Bengaluru",
+        date: "3 days ago",
+        comment: "Very smooth UPI checkout. Got ₹50 off using WELCOME50 coupon."
+      }
+    ];
+
+    function renderReviews() {
+      const container = document.getElementById('reviews-container');
+      container.innerHTML = defaultReviews.map(r => `
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-lily-200 transition-colors">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm">${r.name}</h4>
+              <span class="text-[11px] text-slate-400">${r.location} • ${r.date}</span>
+            </div>
+            <div class="text-amber-400 text-xs">
+              ${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}
+            </div>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed">${r.comment}</p>
+        </div>
+      `).join('');
+    }
+
+    function submitReview(e) {
+      e.preventDefault();
+      const name = document.getElementById('rev-name').value;
+      const rating = parseInt(document.getElementById('rev-rating').value);
+      const location = document.getElementById('rev-location').value;
+      const comment = document.getElementById('rev-comment').value;
+
+      defaultReviews.unshift({
+        name,
+        rating,
+        location,
+        date: "Just now",
+        comment
+      });
+
+      renderReviews();
+      document.getElementById('review-form').reset();
+      showToast("Thank you for your valuable feedback! 🌸");
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = "toast-enter pointer-events-auto bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-2xl shadow-xl border border-slate-800 flex items-center gap-2";
+      toast.innerHTML = `<span>🌸</span> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('toast-enter');
+        toast.classList.add('toast-exit');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize App
+    window.onload = function() {
+      renderProducts();
+      renderReviews();
+    };
+  </script>
+</body>
+</html>
